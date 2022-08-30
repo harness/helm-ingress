@@ -1,0 +1,4 @@
+# {{ range $app := .Values.modules }}
+# {{include "harness.ingress" (dict "global" $.Values "app" $app )}}
+# ---
+# {{ end }}

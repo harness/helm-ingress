@@ -1,0 +1,23 @@
+global:
+  ingress:
+    enabled: true
+    hostname: "test@harness.com"
+    ingressClassName: ""
+
+
+accessControl:
+  enabled: true
+  apiVersion: ""
+  ingressClassName: ""
+  hostname: access-control
+  path: /authz(/|$)(.*) 
+  pathType: ImplementationSpecific
+  serviceName: access-control
+  servicePort: 9006
+  annotations: {}
+  tls: false
+  extraHosts: []
+  extraPaths: []
+  extraTls: []
+  secrets: []
+  extraRules: []

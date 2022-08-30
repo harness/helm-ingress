@@ -1,0 +1,55 @@
+{{- if and .Values.global.ingress.enabled -}}
+apiVersion: {{ include "common.capabilities.ingress.apiVersion" . }}
+kind: Ingress
+metadata:
+  name: access-control
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
+    {{- if .Values.accessControl.annotations }}
+    {{- include "common.tplvalues.render" (dict "value" .Values.accessControl.annotations "context" $) | nindent 4 }}
+    {{- end }}
+spec:
+  {{- if and .Values.global.ingress.ingressClassName (include "common.ingress.supportsIngressClassname" .) }}
+  ingressClassName: {{ .Values.global.ingress.ingressClassName | quote }}
+  {{- end }}
+  rules:
+    {{- if .Values.global.ingress.hostname }}
+    - host: {{ .Values.global.ingress.hostname }}
+      http:
+        paths:
+          {{- if .Values.accessControl.extraPaths }}
+          {{- toYaml .Values.accessControl.extraPaths | nindent 10 }}
+          {{- end }}
+          - path: {{ .Values.accessControl.path }}
+            {{- if eq "true" (include "common.ingress.supportsPathType" .) }}
+            pathType: {{ .Values.accessControl.pathType }}
+            {{- end }}
+            backend: {{- include "common.ingress.backend" (dict "serviceName" "access-control" "servicePort" .Values.accessControl.servicePort "context" $)  | nindent 14 }}
+    {{- end }}
+    {{- range .Values.accessControl.extraHosts }}
+    - host: {{ .name | quote }}
+      http:
+        paths:
+          - path: {{ default "/" .path }}
+            {{- if eq "true" (include "common.ingress.supportsPathType" $) }}
+            pathType: {{ default "ImplementationSpecific" .pathType }}
+            {{- end }}
+            backend: {{ include "common.ingress.backend" (dict "serviceName" "backendName" "servicePort" "backendPort" "context" $) | nindent 14}}
+    {{- end }}
+    {{- if .Values.accessControl.extraRules }}
+    {{- include "common.tplvalues.render" (dict "value" .Values.accessControl.extraRules "context" $) | nindent 4 }}
+    {{- end }}
+  {{- if or .Values.accessControl.tls .Values.accessControl.extraTls }}
+  tls:
+    {{- if .Values.accessControl.tls }}
+    - hosts:
+        - {{ .Values.global.accessControl.hostname }}
+      secretName: {{ printf "%s-tls" .Values.global.accessControl.hostname }}
+    {{- end }}
+    {{- if .Values.accessControl.extraTls }}
+    {{- include "common.tplvalues.render" ( dict "value" .Values.accessControl.extraTls "context" $ ) | nindent 4 }}
+    {{- end }}
+  {{- end }}
+{{- end }}
