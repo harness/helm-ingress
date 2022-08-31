@@ -16,7 +16,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: {{ .name }}
-  namespace: {{ .Release.Namespace }}
+  namespace: {{ .context.Release.Namespace }}
   labels: 
   {{ include "ingress.labels" (dict "name" .name) | indent 2 }}
   {{- with .settings.annotations }}
@@ -28,7 +28,7 @@ spec:
       http:
         paths:
           - path: {{ .settings.path }}
-            pathType: {{ .settings.pathType }}
+            pathType: ImplementationSpecific
             backend:
               service:
                 name: {{ .name }}
