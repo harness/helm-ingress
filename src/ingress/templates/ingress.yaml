@@ -1,4 +1,6 @@
-# {{ range $app := .Values.modules }}
-# {{include "harness.ingress" (dict "global" $.Values "app" $app )}}
-# ---
-# {{ end }}
+{{ range $m := .Values.modules }}
+{{ range $key, $value := $m }}
+{{ include "harness.ingress" (dict "name" $key "settings" $value "global" $.Values.global "context" $.Values ) }}
+---
+{{ end }}
+{{ end }}
