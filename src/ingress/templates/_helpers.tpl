@@ -17,14 +17,14 @@ kind: Ingress
 metadata:
   name: {{ .name }}
   namespace: {{ .context.Release.Namespace }}
-  labels: 
+  labels:
   {{ include "ingress.labels" (dict "name" .name) | indent 2 }}
   {{- with .settings.annotations }}
   annotations: {{ toYaml .| nindent 4 }}
   {{- end }}
 spec:
   rules:
-    - host: {{ .global.ingress.hostname }}  
+    - host: {{ .global.ingress.hostname }}
       http:
         paths:
           - path: {{ .settings.path }}
