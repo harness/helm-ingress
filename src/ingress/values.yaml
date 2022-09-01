@@ -125,6 +125,3 @@ modules:
       servicePort: 8078
       annotations:
         nginx.ingress.kubernetes.io/rewrite-target: /$2
-
-
-
