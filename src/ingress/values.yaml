@@ -7,7 +7,7 @@ global:
 
 modules:
   - access-control:
-      path: /authz(/|$)(.*) 
+      path: /authz(/|$)(.*)
       servicePort: 9006
       annotations:
         nginx.ingress.kubernetes.io/rewrite-target: /$2'
@@ -37,10 +37,10 @@ modules:
           backend:
             service:
               name: harness-manager
-              port: 
+              port:
                 number: 9090
   - delegate-proxy:
-      path: /storage 
+      path: /storage
       servicePort: 80
       annotations: {}
   - log-service:
@@ -62,7 +62,7 @@ modules:
           backend:
             service:
               name: minio
-              port: 
+              port:
                 number: 9001
   - ng-auth-ui:
       path: /auth(/|$)(.*)
@@ -85,25 +85,25 @@ modules:
       annotations:
         nginx.ingress.kubernetes.io/rewrite-target: /$2
   - platform-service:
-      path: /notifications(/|$)(.*) 
+      path: /notifications(/|$)(.*)
       servicePort: 9005
       annotations:
         nginx.ingress.kubernetes.io/rewrite-target: /$2
         nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
       extraPaths:
-        - path: /audit(/|$)(.*) 
+        - path: /audit(/|$)(.*)
           pathType: ImplementationSpecific
           backend:
             service:
               name: platform-service
-              port: 
+              port:
                 number: 9005
-        - path: /resourcegroup(/|$)(.*)  
+        - path: /resourcegroup(/|$)(.*)
           pathType: ImplementationSpecific
           backend:
             service:
               name: platform-service
-              port: 
+              port:
                 number: 9005
   - sto-core:
       path: /sto(/|$)(.*)
@@ -127,4 +127,4 @@ modules:
         nginx.ingress.kubernetes.io/rewrite-target: /$2
 
 
-        
+
