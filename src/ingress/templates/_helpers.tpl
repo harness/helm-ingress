@@ -34,5 +34,8 @@ spec:
                 name: {{ .name }}
                 port:
                   number: {{ $svcPort }}
+          {{- with .settings.extraPaths }}
+          {{ toYaml .| nindent 10 }}
+          {{- end }}
 {{- end }}
 {{- end }}

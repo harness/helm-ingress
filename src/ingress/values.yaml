@@ -9,8 +9,122 @@ modules:
   - access-control:
       path: /authz(/|$)(.*) 
       servicePort: 9006
-      annotations: {}
+      annotations:
+        nginx.ingress.kubernetes.io/rewrite-target: /$2'
+        nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
+  - ci-manager:
+      path: /ci(/|$)(.*)
+      servicePort: 7090
+      annotations:
+        nginx.ingress.kubernetes.io/rewrite-target: /$2'
+  - cv-nextgen:
+      path: /cv/api(/|$)(.*)
+      servicePort: 6060
+      annotations:
+        nginx.ingress.kubernetes.io/rewrite-target: /$2'
   - gateway:
-      path: /gateway(/|$)(.*) 
-      servicePort: 20023
+      path: /gateway(/|$)(.*)
+      servicePort: 80
+      annotations:
+        nginx.ingress.kubernetes.io/rewrite-target: /$2'
+  - harness-manager:
+      path: /api
+      servicePort: 9090
       annotations: {}
+      extraPaths:
+        - path: /stream
+          pathType: ImplementationSpecific
+          backend:
+            service:
+              name: harness-manager
+              port: 
+                number: 9090
+  - delegate-proxy:
+      path: /storage 
+      servicePort: 80
+      annotations: {}
+  - log-service:
+      path: "/log-service(/|$)(.*)"
+      servicePort: 8079
+      annotations:
+        nginx.ingress.kubernetes.io/rewrite-target: /$2
+  - login:
+      path: /
+      servicePort: 80
+      annotations: {}
+  - minio:
+      path: /logs
+      servicePort: 9000
+      annotations: {}
+      extraPaths:
+        - path: /minio
+          pathType: ImplementationSpecific
+          backend:
+            service:
+              name: minio
+              port: 
+                number: 9001
+  - ng-auth-ui:
+      path: /auth(/|$)(.*)
+      servicePort: 80
+      annotations:
+        nginx.ingress.kubernetes.io/rewrite-target: /$2
+  - next-gen-ui:
+      path: /ng(/|$)(.*)
+      servicePort: 80
+      annotations:
+        nginx.ingress.kubernetes.io/rewrite-target: /$2
+  - ng-manager:
+      path: /ng/api(/|$)(.*)
+      servicePort: 7090
+      annotations:
+        nginx.ingress.kubernetes.io/rewrite-target: /$2
+  - pipeline-service:
+      path: /pipeline(/|$)(.*)
+      servicePort: 12001
+      annotations:
+        nginx.ingress.kubernetes.io/rewrite-target: /$2
+  - platform-service:
+      path: /notifications(/|$)(.*) 
+      servicePort: 9005
+      annotations:
+        nginx.ingress.kubernetes.io/rewrite-target: /$2
+        nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
+      extraPaths:
+        - path: /audit(/|$)(.*) 
+          pathType: ImplementationSpecific
+          backend:
+            service:
+              name: platform-service
+              port: 
+                number: 9005
+        - path: /resourcegroup(/|$)(.*)  
+          pathType: ImplementationSpecific
+          backend:
+            service:
+              name: platform-service
+              port: 
+                number: 9005
+  - sto-core:
+      path: /sto(/|$)(.*)
+      servicePort: 4000
+      annotations:
+        nginx.ingress.kubernetes.io/rewrite-target: /$2
+  - sto-manager:
+      path: /sto-manager(/|$)(.*)
+      servicePort: 7090
+      annotations:
+        nginx.ingress.kubernetes.io/rewrite-target: /$2
+  - template-service:
+      path: /template(/|$)(.*)
+      servicePort: 15002
+      annotations:
+        nginx.ingress.kubernetes.io/rewrite-target: /$2
+  - ti-service:
+      path: /ti-service(/|$)(.*)
+      servicePort: 8078
+      annotations:
+        nginx.ingress.kubernetes.io/rewrite-target: /$2
+
+
+        
